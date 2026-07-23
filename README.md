@@ -82,7 +82,7 @@ Everything above is tunable via CLI flags — run `python pocket_tts_expressive.
 ## Credits
 
 - Core engine and model: [Kyutai](https://kyutai.org) — [Pocket TTS](https://github.com/kyutai-labs/pocket-tts) (MIT License).
-- Markup system, QA/rescue pipeline, and segment-regeneration tooling: built and extensively tested by [your name/handle here], with coding assistance from Claude (Anthropic) and DeepSeek. I'm not a developer by background — every line here was tested in practice until it reliably worked, not written from theoretical knowledge.
+- Markup system, QA/rescue pipeline, and segment-regeneration tooling: built and extensively tested by music-and-arts, with coding assistance from Claude (Anthropic) and DeepSeek. I'm not a developer by background — every line here was tested in practice until it reliably worked, not written from theoretical knowledge.
 
 ## License
 
