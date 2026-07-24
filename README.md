@@ -105,6 +105,8 @@ Longer texts fed to a TTS model in one shot tend to drift, skip words, or trail 
 
 Everything above is tunable via CLI flags — run `python pocket_tts_expressive.py --help` for the full list.
 
+**A practical note on `--workers`**: each worker process loads its own copy of the model, so more workers means more RAM used. If the program crashes (Windows sometimes reports this as an "access violation"), the most common fix is simply lowering `--workers` in the `.bat` file (default is 6) — try 4 or 2 depending on your available RAM, especially on machines with 8GB or less.
+
 ## Credits
 
 - Core engine and model: [Kyutai](https://kyutai.org) — [Pocket TTS](https://github.com/kyutai-labs/pocket-tts) (MIT License).
