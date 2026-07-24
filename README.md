@@ -23,6 +23,28 @@ This project also happens to implement what the original repo lists under ["Unsu
 4. Optional, only for `--asr-verify`: `pip install faster-whisper --break-system-packages`.
 5. Place these files in the same folder as your Pocket TTS installation / virtual environment (the `.bat` files expect `.venv\Scripts\activate` to exist alongside them).
 
+## Adapting this to your own setup
+
+The `.bat` files and the two Python scripts were written for one specific folder layout and one specific voice/language. Before using them, check these spots:
+
+- **`.venv` location**: both `.bat` files run `call .venv\Scripts\activate` — this assumes the virtual environment is a folder named `.venv` in the *same directory as the `.bat` file itself*. If your venv is named differently or lives elsewhere, edit that line in both `.bat` files (or move/rename your venv to match).
+- **Script name/location**: `rigenera_segmento.py` calls the main generator with a relative path, `sys.executable, 'pocket_tts_expressive.py'` — if you keep all files in the same folder (as intended) this just works; if you rename or relocate `pocket_tts_expressive.py`, update that line accordingly.
+- **Default language/voice**: hardcoded in both `.bat` files (`--language italian_24l --voice giovanni`) and, separately, in `rigenera_segmento.py` (same two flags, inside the `cmd = [...]` list). If you want a different default, change all three places — see the voice/language section below.
+
+## Choosing a different voice or language
+
+The defaults here (`italian_24l` / `giovanni`) are what this was built and tested with, but Pocket TTS ships more options and also supports voice cloning:
+
+- **Pre-made voices**: Kyutai provides a small catalog of ready-to-use voices with their licenses listed on the [voice catalog page](https://huggingface.co/kyutai/tts-voices). Pass any of them with `--voice <name>`.
+- **Cloning your own voice**: `--voice` also accepts a path to a local `.wav`/`.mp3` file, or an `hf://` path to a sample hosted on Hugging Face — Pocket TTS will clone that voice on the fly. See the [official generate/export-voice docs](https://kyutai-labs.github.io/pocket-tts/) for details, including the `export-voice` command that converts a cloned sample into a `.safetensors` file for much faster loading on repeated runs (useful if you clone a voice you'll reuse often).
+- **Other languages**: pass `--language <code>` (see the official repo for the currently supported list — more are being added over time).
+
+Once you've picked a voice/language, update `--voice` and `--language` in the `.bat` files and in `rigenera_segmento.py` as described above, so both the main generation and the single-segment fix use the same voice consistently.
+
+### About voice cloning and this pipeline
+
+I also have a separate `.bat` that launches Pocket TTS's own HTML GUI (`pocket-tts serve`), which is the easiest way to clone a voice interactively. It's **not included in this repo**, because it's just a thin launcher for the official GUI — nothing custom of mine to add. More importantly: once you generate audio *through* that GUI, you're outside this pipeline entirely, so none of the hallucination detection/rescue/segment-regeneration tooling here applies to it. Use the official GUI to clone and test a voice, but come back to `pocket_tts_expressive.py` (with `--voice` pointed at your cloned voice or its exported `.safetensors` file) for actual long-form generation with QA.
+
 ## Markup syntax
 
 Three inline tags can be placed anywhere in the text, and apply to everything after them until the next tag (or end of paragraph):
@@ -52,7 +74,11 @@ python pocket_tts_expressive.py input.txt output.wav \
     --debug
 ```
 
-Or just run `genera_espressivo_debug.bat` and follow the prompts (it hardcodes the flags above so it's always clear what a given run used).
+Or just run `genera_espressivo_debug.bat` and follow the prompts (it hardcodes the flags above so it's always clear what a given run used). This `.bat` is a plain command-line launcher — it has nothing to do with Pocket TTS's own web GUI (`pocket-tts serve`) and doesn't need it running. Two ways to use it:
+- **Drag and drop** a `.txt` file directly onto the `.bat` file's icon in Windows Explorer — it will pick it up as the input automatically.
+- Or just **double-click** the `.bat` and type the filename when prompted.
+
+Either way it'll then ask for the output filename (or accept the default) and proceed.
 
 `--debug` writes every generated segment as an individual `.wav` plus a `manifest.csv` in a `<output>_debug/` folder — this is what the segment-regeneration tool reads from.
 
@@ -82,7 +108,7 @@ Everything above is tunable via CLI flags — run `python pocket_tts_expressive.
 ## Credits
 
 - Core engine and model: [Kyutai](https://kyutai.org) — [Pocket TTS](https://github.com/kyutai-labs/pocket-tts) (MIT License).
-- Markup system, QA/rescue pipeline, and segment-regeneration tooling: built and extensively tested by music-and-arts, with coding assistance from Claude (Anthropic) and DeepSeek. I'm not a developer by background — every line here was tested in practice until it reliably worked, not written from theoretical knowledge.
+- Markup system, QA/rescue pipeline, and segment-regeneration tooling: built and extensively tested by [your name/handle here], with coding assistance from Claude (Anthropic) and DeepSeek. I'm not a developer by background — every line here was tested in practice until it reliably worked, not written from theoretical knowledge.
 
 ## License
 
