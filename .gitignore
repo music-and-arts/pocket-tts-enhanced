@@ -1,0 +1,17 @@
+# Ambiente virtuale Python
+.venv/
+venv/
+
+# File compilati/cache Python
+__pycache__/
+*.pyc
+
+# Output audio generati durante i test
+*.wav
+
+# Cartelle di debug create da --debug
+*_debug/
+
+# File di sistema
+.DS_Store
+Thumbs.db
